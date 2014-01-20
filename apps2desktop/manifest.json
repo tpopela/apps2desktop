@@ -1,0 +1,13 @@
+{
+  "name": "Apps2Desktop",
+  "version": "0.2",
+  "permissions": ["management"],
+  "background": {
+    "page": "background.html",
+    "script": "background.js"
+  },
+ "plugins": [
+    { "path": "apps2desktop.so" }
+  ],
+  "manifest_version": 2
+}
