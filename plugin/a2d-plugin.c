@@ -46,10 +46,10 @@ G_DEFINE_TYPE (A2DPlugin, a2d_plugin, G_TYPE_OBJECT)
 #define METHOD_ADD "add"
 #define METHOD_REMOVE "remove"
 
-#define CHROME_EXTENSIONS_PATH "/.config/google-chrome/Default/Extensions/"
-#define CHROMIUM_EXTENSIONS_PATH "/.config/chromium/Default/Extensions/"
-#define USER_DESKTOP_FILE_PATH "/.local/share/applications/"
-#define USER_ICON_PATH "/.local/share/icons/hicolor/"
+#define CHROME_EXTENSIONS_PATH "/google-chrome/Default/Extensions/"
+#define CHROMIUM_EXTENSIONS_PATH "/chromium/Default/Extensions/"
+#define USER_DATA_DIR_APPLICATIONS "/applications/"
+#define USER_DATA_DIR_ICONS "/icons/hicolor/"
 #define MANIFEST_FILE "manifest.json"
 
 #define CHROME "Chrome"
@@ -167,7 +167,7 @@ get_desktop_filename_path (const gchar *app_id)
     gchar *desktop_filename = get_desktop_filename (app_id);
 
     desktop_filename_path = g_strconcat (
-            g_get_home_dir (), USER_DESKTOP_FILE_PATH, desktop_filename, NULL);
+        g_get_user_data_dir (), USER_DATA_DIR_APPLICATIONS, desktop_filename, NULL);
 
     g_free (desktop_filename);
 
@@ -186,10 +186,10 @@ get_extension_directory_path (const gchar *app_id)
     gchar *extension_root;
     gchar *extension_path = NULL;
 
-    extension_root =
-        g_strconcat (g_get_home_dir (),
-                     running_chromium ? CHROMIUM_EXTENSIONS_PATH : CHROME_EXTENSIONS_PATH,
-                     app_id, "/", NULL);
+    extension_root = g_strconcat (
+        g_get_user_config_dir (),
+        running_chromium ? CHROMIUM_EXTENSIONS_PATH : CHROME_EXTENSIONS_PATH,
+        app_id, "/", NULL);
 
     dir = g_dir_open (extension_root, 0, NULL);
 
@@ -298,8 +298,8 @@ check_if_prefix_needed ()
     const gchar *desktop_file;
     gboolean already_found_something = FALSE;
 
-    desktop_file_directory = g_strconcat (g_get_home_dir (),
-                                          USER_DESKTOP_FILE_PATH, NULL);
+    desktop_file_directory = g_strconcat (
+        g_get_user_data_dir (), USER_DATA_DIR_APPLICATIONS, NULL);
 
     dir = g_dir_open (desktop_file_directory, 0, NULL);
     desktop_file = g_dir_read_name (dir);
@@ -412,7 +412,8 @@ remove_app_icons (const char* app_id)
     const gchar *icon_size_directory_name;
     gchar *icon_filename;
 
-    icon_path_root = g_strconcat (g_get_home_dir (), USER_ICON_PATH, NULL);
+    icon_path_root = g_strconcat (
+        g_get_user_data_dir (), USER_DATA_DIR_ICONS, NULL);
 
     dir = g_dir_open (icon_path_root, 0, NULL);
     icon_size_directory_name = g_dir_read_name (dir);
@@ -447,8 +448,8 @@ remove_app (const char* app_id)
     const gchar *desktop_file;
     gchar* desktop_file_filename = get_desktop_filename (app_id);
 
-    desktop_file_directory =
-        g_strconcat (g_get_home_dir (), USER_DESKTOP_FILE_PATH, NULL);
+    desktop_file_directory = g_strconcat (
+        g_get_user_data_dir (), USER_DATA_DIR_APPLICATIONS, NULL);
 
     dir = g_dir_open (desktop_file_directory, 0, NULL);
     desktop_file = g_dir_read_name (dir);
@@ -672,7 +673,8 @@ add_app (const gchar* app_name, const gchar* app_id, const char* app_version,
 
     g_key_file_free (desktop_file);
 
-    icon_directory = g_strconcat (g_get_home_dir (), USER_ICON_PATH, NULL);
+    icon_directory = g_strconcat (
+        g_get_user_data_dir (), USER_DATA_DIR_ICONS, NULL);
 
     if (json_reader_read_member (reader, "icons")) {
         gint ii;
